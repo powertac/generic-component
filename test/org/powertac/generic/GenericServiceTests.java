@@ -17,6 +17,7 @@ package org.powertac.generic;
 
 import static org.junit.Assert.*;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +29,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Tests for GenericService
+ * Tests for a GenericService. See AuctionServiceTests for a detailed
+ * example. We use the Spring test runner for integration testing. Mocks
+ * may be created in the test code, or may be instantiated by Spring and
+ * autowired into the test. Test component configuration is in test-config.xml.
  * @author John Collins
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,11 +54,15 @@ public class GenericServiceTests
   @BeforeClass
   public static void setUpBeforeClass () throws Exception
   {
+    PropertyConfigurator.configure("test/log.config");
   }
 
   @Before
   public void setUp () throws Exception
   {
+    // clean up from previous tests
+    pluginConfigRepo.recycle();
+    timeslotRepo.recycle();
   }
 
   @Test
