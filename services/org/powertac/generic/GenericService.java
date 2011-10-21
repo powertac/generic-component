@@ -23,8 +23,8 @@ import org.joda.time.Instant;
 import org.powertac.common.PluginConfig;
 import org.powertac.common.Timeslot;
 import org.powertac.common.interfaces.BrokerMessageListener;
-import org.powertac.common.interfaces.CompetitionControl;
 import org.powertac.common.interfaces.TimeslotPhaseProcessor;
+import org.powertac.common.repo.TimeslotRepo;
 import org.powertac.common.state.StateChange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,8 @@ import org.springframework.stereotype.Service;
  */
 @Service // allows this service to be autowired into other services
 public class GenericService 
-implements TimeslotPhaseProcessor, BrokerMessageListener
+  extends TimeslotPhaseProcessor
+  implements BrokerMessageListener
 {
   /** logger for trace logging -- use log.info(), log.warn(), and log.error()
    *  appropriately. Use log.debug() for output you want to see in testing or
@@ -46,14 +47,11 @@ implements TimeslotPhaseProcessor, BrokerMessageListener
   static private Logger log = Logger.getLogger(GenericService.class.getName());
 
   @Autowired // spring will fill this in for you
-  private CompetitionControl competitionControlService;
+  private TimeslotRepo timeslotRepo;
   
   private List<Timeslot> workingData;
   private int defaultParameter = 0;
   private int parameter = 0;
-  
-  /** when to invoke this service in per-timeslot processing */
-  private int simulationPhase = 3;
   
   /**
    * Most services need only a default constructor. Remember that this will be
@@ -76,7 +74,7 @@ implements TimeslotPhaseProcessor, BrokerMessageListener
   {
     workingData.clear();
     setParameter(config.getIntegerValue("parameter", defaultParameter));
-    competitionControlService.registerTimeslotPhase(this, simulationPhase);  
+    super.init();
   }
   
   @StateChange // logs state change
