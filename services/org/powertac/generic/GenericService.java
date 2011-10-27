@@ -37,8 +37,9 @@ import org.springframework.stereotype.Service;
  * @author John Collins
  */
 @Service // allows this service to be autowired into other services
-public class GenericService 
-implements TimeslotPhaseProcessor, BrokerMessageListener
+public class GenericService
+  extends  TimeslotPhaseProcessor
+  implements BrokerMessageListener
 {
   /** logger for trace logging -- use log.info(), log.warn(), and log.error()
    *  appropriately. Use log.debug() for output you want to see in testing or
@@ -76,7 +77,7 @@ implements TimeslotPhaseProcessor, BrokerMessageListener
   {
     workingData.clear();
     setParameter(config.getIntegerValue("parameter", defaultParameter));
-    competitionControlService.registerTimeslotPhase(this, simulationPhase);  
+    super.init();
   }
   
   @StateChange // logs state change
